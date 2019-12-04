@@ -1,0 +1,107 @@
+#include "latticeExporter_3.h"
+
+void ExporterBase::set_lin_frame(int start, int n_step, int sep) {
+  n_step_ = n_step;
+  for (auto i = start + sep; i <= n_step_; i += sep) {
+    frames_arr_.push_back(i);
+  }
+  frame_iter_ = frames_arr_.begin();
+}
+
+bool ExporterBase::need_export(int i_step) {
+  bool flag = false;
+  if (!frames_arr_.empty() && i_step == (*frame_iter_)) {
+    frame_iter_++;
+    flag = true;
+  }
+  return flag;
+}
+
+LogExporter::LogExporter(const std::string& outfile, int start, int n_step, int sep, int np)
+  : ExporterBase(start, n_step, sep), n_par_(np) {
+#ifdef USE_MPI
+  int my_rank;
+  MPI_Comm_rank(comm_, &my_rank);
+  if (my_rank == 0) {
+#endif
+    fout.open(outfile);
+    t_start_ = std::chrono::system_clock::now();
+    auto start_time = std::chrono::system_clock::to_time_t(t_start_);
+    char str[100];
+    tm now_time;
+#ifdef _MSC_VER
+
+    localtime_s(&now_time, &start_time);
+#else
+    localtime_r(&start_time, &now_time);
+#endif
+    std::strftime(str, 100, "%c", &now_time);
+    fout << "Started simulation at " << str << "\n";
+#ifdef USE_MPI
+  }
+#endif
+}
+
+LogExporter::~LogExporter() {
+#ifdef USE_MPI
+  int my_rank;
+  MPI_Comm_rank(comm_, &my_rank);
+  if (my_rank == 0) {
+#endif
+    const auto t_now = std::chrono::system_clock::now();
+    auto end_time = std::chrono::system_clock::to_time_t(t_now);
+    char str[100];
+    tm now_time;
+#ifdef _MSC_VER
+    localtime_s(&now_time, &end_time);
+#else
+    localtime_r(&end_time, &now_time);
+#endif
+    std::strftime(str, 100, "%c", &now_time);
+    fout << "Finished simulation at " << str << "\n";
+    std::chrono::duration<double> elapsed_seconds = t_now - t_start_;
+    fout << "speed=" << std::scientific << step_count_ * double(n_par_) / elapsed_seconds.count()
+      << " particle time step per second per core\n";
+    fout.close();
+#ifdef USE_MPI
+  }
+#endif
+}
+
+void LogExporter::record(int i_step) {
+  bool flag;
+#ifdef USE_MPI
+  int my_rank;
+  MPI_Comm_rank(comm_, &my_rank);
+  flag = my_rank == 0 && need_export(i_step);
+#else
+  flag = need_export(i_step);
+#endif
+  if (flag) {
+    const auto t_now = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = t_now - t_start_;
+    const auto dt = elapsed_seconds.count();
+    const auto hour = int(dt / 3600);
+    const auto min = int((dt - hour * 3600) / 60);
+    const int sec = dt - hour * 3600 - min * 60;
+    fout << i_step << "\t" << hour << ":" << min << ":" << sec << std::endl;
+  }
+  step_count_++;
+}
+
+void XYZExporter::dump(int i_step, const std::vector<PEP_3::LatticeCoord>& par_arr) {
+  //if (need_export(i_step)) {
+  if (i_step % sep_ == 0) {
+    int n_par = par_arr.size();
+    fout_ << n_par << "\n";
+    // comment line
+    fout_ << "Lattice=\"" << Lx_ << " 0 0 0 " << Ly_ << " 0 0 0 " << Lz_ << "\" "
+      << "Properties=species:S:1:pos:R:3 "
+      << "Time=" << i_step;
+    for (int j = 0; j < n_par; j++) {
+      fout_ << "\n" << "N\t"
+        << par_arr[j].x << "\t" << par_arr[j].y << "\t" << par_arr[j].z;
+    }
+    fout_ << std::endl;
+  }
+}
