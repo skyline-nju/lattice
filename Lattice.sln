@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PEP2d", "PEP2d\PEP2d.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PEP3d", "PEP3d\PEP3d.vcxproj", "{01B41630-4D68-415F-ACB0-EC051E7F9D9A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PEP_v2", "PEP_v2\PEP_v2.vcxproj", "{4EFF97B6-8D15-4B6C-819A-5733A9BF803A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{01B41630-4D68-415F-ACB0-EC051E7F9D9A}.Release|x64.Build.0 = Release|x64
 		{01B41630-4D68-415F-ACB0-EC051E7F9D9A}.Release|x86.ActiveCfg = Release|Win32
 		{01B41630-4D68-415F-ACB0-EC051E7F9D9A}.Release|x86.Build.0 = Release|Win32
+		{4EFF97B6-8D15-4B6C-819A-5733A9BF803A}.Debug|x64.ActiveCfg = Debug|x64
+		{4EFF97B6-8D15-4B6C-819A-5733A9BF803A}.Debug|x64.Build.0 = Debug|x64
+		{4EFF97B6-8D15-4B6C-819A-5733A9BF803A}.Debug|x86.ActiveCfg = Debug|Win32
+		{4EFF97B6-8D15-4B6C-819A-5733A9BF803A}.Debug|x86.Build.0 = Debug|Win32
+		{4EFF97B6-8D15-4B6C-819A-5733A9BF803A}.Release|x64.ActiveCfg = Release|x64
+		{4EFF97B6-8D15-4B6C-819A-5733A9BF803A}.Release|x64.Build.0 = Release|x64
+		{4EFF97B6-8D15-4B6C-819A-5733A9BF803A}.Release|x86.ActiveCfg = Release|Win32
+		{4EFF97B6-8D15-4B6C-819A-5733A9BF803A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

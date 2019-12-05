@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "rand.h"
-#define N_MAX 2
+#define N_MAX 1
 
 namespace PEP_2 {
 
