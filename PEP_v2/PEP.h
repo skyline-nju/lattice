@@ -1,6 +1,7 @@
 #pragma once
 #include "config.h"
 #include "rand.h"
+#include <iostream>
 
 struct Par_2 {
 public:
@@ -39,8 +40,16 @@ public:
   template <typename TPar>
   void move(TPar& p);
 
+  template <typename TPar, typename TRan>
+  void move_rand_reflect(TPar& p, TRan& myran) {}
+
   template <typename T>
   void boundary_condi(T &x, T &y) const;
+
+  int count_empty_sites(int row) const;
+
+  template <typename IntType>
+  void get_wetting_profile(IntType* num, int row) const;
 
 private:
   int Lx_;
@@ -72,6 +81,9 @@ public:
 
   template <typename TPar>
   void move(TPar& p);
+
+  template <typename TPar, typename TRan>
+  void move_rand_reflect(TPar& p, TRan& myran);
 
   template <typename T>
   void boundary_condi(T& x, T& y, T& z) const;
@@ -120,9 +132,17 @@ void SquareLattice::boundary_condi(T &x, T&y) const {
   }
 
   if (y < 0) {
-    y = Ly_ - 1;
-  } else if (y >= Ly_) {
+#ifdef WALL_TOP_BOTTOM
     y = 0;
+#else
+    y = Ly_ - 1;
+#endif
+  } else if (y >= Ly_) {
+#ifdef WALL_TOP_BOTTOM
+    y = Ly_ - 1;
+#else
+    y = 0;
+#endif
   }
 }
 
@@ -138,6 +158,35 @@ void SquareLattice::move(TPar& p) {
     n_[idx0]--;
     p.x = x;
     p.y = y;
+  }
+}
+
+template <typename IntType>
+void SquareLattice::get_wetting_profile(IntType* num, int row) const{
+  for (int i = 0; i < Lx_; i++) {
+    num[i] = 0;
+  }
+  int drow;
+  if (row == 0) {
+    drow = 1;
+  } else if (row == Ly_ - 1) {
+    drow = -1;
+  } else {
+    std::cout << "Error! The value of row must be 0 or Ly-1" << std::endl;
+    exit(1);
+  }
+
+  for (int i = 0; i < Lx_; i++) {
+    size_t row_cur = row;
+    while (true) {
+      size_t idx = i + row_cur * Lx_;
+      if (n_[idx] > 0) {
+        num[i] += n_[idx];
+        row_cur += drow;
+      } else {
+        break;
+      }
+    }
   }
 }
 
@@ -180,9 +229,17 @@ void CubicLattice::boundary_condi(T& x, T& y, T& z) const {
   }
 
   if (z < 0) {
-    z = Lz_ - 1;
-  } else if (z >= Lz_) {
+#ifdef WALL_TOP_BOTTOM
     z = 0;
+#else
+    z = Lz_ - 1;
+#endif
+  } else if (z >= Lz_) {
+#ifdef WALL_TOP_BOTTOM
+    z = Lz_ - 1;
+#else
+    z = 0;
+#endif
   }
 }
 
@@ -201,6 +258,60 @@ void CubicLattice::move(TPar& p) {
     p.y = y;
     p.z = z;
   }
+
+}
+
+template<typename TPar, typename TRan>
+void CubicLattice::move_rand_reflect(TPar& p, TRan& myran) {
+
+  short z = p.z + ori_arr_[p.ori][2];
+  bool flag_reflect = false;
+  if (z < 0) {
+    z = 0;
+  } else if (z >= Lz_) {
+    z = Lz_ - 1;
+    flag_reflect = true;
+  }
+
+  if (flag_reflect) {
+    size_t idx1;
+    short x, y;
+    do {
+      x = static_cast<short>(Lx_ * myran.doub());
+      y = static_cast<short>(Ly_ * myran.doub());
+      idx1 = get_idx(x, y, z);
+    } while (n_[idx1] >= N_MAX);
+    n_[idx1]++;
+    size_t idx0 = get_idx(p);
+    n_[idx0]--;
+    p.x = x;
+    p.y = y;
+    p.z = z;
+    p.ori = 5;
+  } else {
+    short x = p.x + ori_arr_[p.ori][0];
+    short y = p.y + ori_arr_[p.ori][1];
+    if (x < 0) {
+      x = Lx_ - 1;
+    } else if (x >= Lx_) {
+      x = 0;
+    }
+    if (y < 0) {
+      y = Ly_ - 1;
+    } else if (y >= Ly_) {
+      y = 0;
+    }
+    size_t idx1 = get_idx(x, y, z);
+    if (n_[idx1] < N_MAX) {
+      n_[idx1]++;
+      size_t idx0 = get_idx(p);
+      n_[idx0]--;
+      p.x = x;
+      p.y = y;
+      p.z = z;
+    }
+  }
+
 
 }
 
@@ -232,6 +343,7 @@ void update_in_rand_seq(std::vector<TPar>& p_arr, TLat& lat, TRan& myran,
       tumble(p, myran);
     }
     lat.move(p);
+    //lat.move_rand_reflect(p, myran);
   }
 }
 

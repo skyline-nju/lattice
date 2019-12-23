@@ -87,3 +87,67 @@ void XYExporter::dump(int i_step, const std::vector<TPar>& par_arr) {
     fout_ << std::endl;
   }
 }
+
+class XYZExporter : public ExporterBase {
+public:
+  XYZExporter(const std::string outfile, int start, int n_step, int sep, int Lx, int Ly, int Lz)
+    : ExporterBase(start, n_step, sep), fout_(outfile), Lx_(Lx), Ly_(Ly), Lz_(Lz), sep_(sep) {}
+
+  template <typename TPar>
+  void dump(int i, const std::vector<TPar>& p_arr);
+private:
+  std::ofstream fout_;
+  int Lx_;
+  int Ly_;
+  int Lz_;
+  int sep_;
+};
+
+template <typename TPar>
+void XYZExporter::dump(int i_step, const std::vector<TPar>& par_arr) {
+  //if (need_export(i_step)) {
+  if (i_step % sep_ == 0) {
+    int n_par = par_arr.size();
+    fout_ << n_par << "\n";
+    // comment line
+    fout_ << "Lattice=\"" << Lx_ << " 0 0 0 " << Ly_ << " 0 0 0 " << Lz_
+      << "\" Properties=species:S:1:pos:R:3 "
+      << "Time=" << i_step;
+    for (int j = 0; j < n_par; j++) {
+      fout_ << "\n" << "N\t"
+        << par_arr[j].x << "\t" << par_arr[j].y << "\t" << par_arr[j].z;
+    }
+    fout_ << std::endl;
+  }
+}
+
+class WettingProfileExporter_2 : public ExporterBase {
+public:
+  WettingProfileExporter_2(const std::string outfile, int start, int n_step, int sep, int Lx, int Ly)
+    : ExporterBase(start, n_step, sep), fout_(outfile, std::ios::binary), Lx_(Lx), Ly_(Ly), sep_(sep) {
+    buf_ = new unsigned char[Lx_];
+  }
+
+  ~WettingProfileExporter_2() {
+    delete[] buf_;
+    fout_.close();
+  }
+  template <typename TLat>
+  void dump(int i_step, const TLat& lattice);
+private:
+  std::ofstream fout_;
+  int Lx_;
+  int Ly_;
+  int sep_;
+  unsigned char* buf_;
+};
+
+template <typename TLat>
+void WettingProfileExporter_2::dump(int i_step, const TLat& lattice) {
+  int t = i_step;
+  fout_.write((char*)&t, sizeof(int));
+  lattice.get_wetting_profile(buf_, 0);
+  fout_.write((char*)buf_, sizeof(unsigned char) * Lx_);
+  lattice.get_wetting_profile(buf_, Ly_ - 1);
+  fout_.write((char*)buf_, sizeof(unsigned char) * Lx_);
+}

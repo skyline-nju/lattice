@@ -212,3 +212,16 @@ void test_3D(int L) {
     }
   }
 }
+
+int SquareLattice::count_empty_sites(int row) const {
+  int n_empty = 0;
+  size_t row_Lx = row * static_cast<size_t>(Lx_);
+  for (int i = 0; i < Lx_; i++) {
+    size_t idx = i + row_Lx;
+    if (n_[idx] == 0) {
+      n_empty++;
+    }
+  }
+  return n_empty;
+}
+
