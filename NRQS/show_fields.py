@@ -4,15 +4,15 @@ import struct
 
 
 if __name__ == "__main__":
-    Lx = 64
-    Ly = 8
+    Lx = 128
+    Ly = 16
     
-    rho0 = 20
+    rho0 = 10
     phiA = rho0
     phiB = rho0
 
-    Dt = 0.2
-    Dr = 0.05
+    Dt = 0.1
+    Dr = 0.01
     v0 = 1
 
     etaAA = 0
@@ -55,8 +55,8 @@ if __name__ == "__main__":
             mask_B = rho[:, :, 1] > 0
             pB[mask_B] = m[:, :, 1][mask_B] / rho[:, :, 1][mask_B]
 
-            axes[0, 0].imshow(rho[:, :, 0], origin="lower", vmin=0, vmax=40, aspect="auto")
-            axes[1, 0].imshow(rho[:, :, 1], origin="lower", vmin=0, vmax=40, aspect="auto")
+            axes[0, 0].imshow(rho[:, :, 0], origin="lower", vmin=0, vmax=rho0*3, aspect="auto")
+            axes[1, 0].imshow(rho[:, :, 1], origin="lower", vmin=0, vmax=rho0*3, aspect="auto")
             axes[0, 1].imshow(pA, origin="lower", vmin=-1, vmax=1, cmap="bwr", aspect="auto")
             axes[1, 1].imshow(pB, origin="lower", vmin=-1, vmax=1, cmap="bwr", aspect="auto")
 

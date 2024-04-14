@@ -15,6 +15,7 @@
 *.log
 *.extxyz
 *.bin
+*.dat
 .vscode
 
 # Build results

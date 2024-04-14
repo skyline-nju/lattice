@@ -4,7 +4,7 @@
 
 class Par_2 {
 public:
-  Par_2(int spin0, int x, int y, int species0): spin(spin0), pos(x, y) {}
+  Par_2(int spin0, int x, int y): spin(spin0), pos(x, y) {}
 
   template <typename TRan>
   Par_2(TRan &myran, const Vec_2<int> &l);

@@ -6,14 +6,14 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  int Lx = 64;
-  int Ly = 8;
-  double rho_thresh = 20;
+  int Lx = 128;
+  int Ly = 16;
+  double rho_thresh = 10;
   double phiA = rho_thresh;
   double phiB = rho_thresh;
 
-  double Dt = 0.2;
-  double Dr = 0.05;
+  double Dt = 0.1;
+  double Dr = 0.01;
   double v0 = 1;
 
   double etaAA = 0;
