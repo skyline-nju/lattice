@@ -78,6 +78,7 @@ private:
   int n_par_;
 
   double prob_arr_[6][8]{};
+  Vec_2<int> ori_arr_[6][6]{};
 
   std::vector<unsigned char> site_state_;
   std::vector<Par_2> p_arr_;

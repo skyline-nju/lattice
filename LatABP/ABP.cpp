@@ -27,6 +27,24 @@ hexa_lattice_2::hexa_lattice_2(const Vec_2<int>& l, double phi,
     }
   }
   
+  ori_arr_[0][0] = Vec_2<int>(1, 0);
+  ori_arr_[0][1] = Vec_2<int>(1, 1);
+  ori_arr_[0][2] = Vec_2<int>(0, 1);
+  ori_arr_[0][3] = Vec_2<int>(-1, 0);
+  ori_arr_[0][4] = Vec_2<int>(-1, -1);
+  ori_arr_[0][5] = Vec_2<int>(0, -1);
+
+  for (int j = 1; j < 6; j++) {
+    for (int i = 0; i < 6; i++) {
+      int k = i + j;
+      if (k >= 6) {
+        k -= 6;
+      }
+      ori_arr_[j][i] = ori_arr_[0][k];
+    }
+  }
+
+
   n_par_ = int(round(phi_ * n_sites_));
   delta_t_ = 1 / (rate_P_ + 6 * rate_D_ + 2 * rate_R_);
   site_state_.reserve(n_sites_);
@@ -84,20 +102,45 @@ void hexa_lattice_2::hop(Par_2& p, const Vec_2<int>& dR) {
 }
 
 void hexa_lattice_2::hop_rot(Par_2& p, double rand_val) {
+  //int s = p.spin;
+  //if (rand_val < prob_arr_[s][0]) {
+  //  hop(p, Vec_2<int>(1, 0));
+  //} else if (rand_val < prob_arr_[s][1]) {
+  //  hop(p, Vec_2<int>(1, 1));
+  //} else if (rand_val < prob_arr_[s][2]) {
+  //  hop(p, Vec_2<int>(0, 1));
+  //} else if (rand_val < prob_arr_[s][3]) {
+  //  hop(p, Vec_2<int>(-1, 0));
+  //} else if (rand_val < prob_arr_[s][4]) {
+  //  hop(p, Vec_2<int>(-1, -1));
+  //} else if (rand_val < prob_arr_[s][5]) {
+  //  hop(p, Vec_2<int>(0, -1));
+  //} else if (rand_val < prob_arr_[s][6]) {
+  //  p.spin += 1;
+  //  if (p.spin >= 6) {
+  //    p.spin -= 6;
+  //  }
+  //} else {
+  //  p.spin -= 1;
+  //  if (p.spin < 0) {
+  //    p.spin += 6;
+  //  }
+  //}
+
   int s = p.spin;
-  if (rand_val < prob_arr_[s][0]) {
-    hop(p, Vec_2<int>(1, 0));
-  } else if (rand_val < prob_arr_[s][1]) {
-    hop(p, Vec_2<int>(1, 1));
-  } else if (rand_val < prob_arr_[s][2]) {
-    hop(p, Vec_2<int>(0, 1));
-  } else if (rand_val < prob_arr_[s][3]) {
-    hop(p, Vec_2<int>(-1, 0));
-  } else if (rand_val < prob_arr_[s][4]) {
-    hop(p, Vec_2<int>(-1, -1));
-  } else if (rand_val < prob_arr_[s][5]) {
-    hop(p, Vec_2<int>(0, -1));
-  } else if (rand_val < prob_arr_[s][6]) {
+  if (rand_val < prob_arr_[0][0]) {
+    hop(p, ori_arr_[s][0]);
+  } else if (rand_val < prob_arr_[0][1]) {
+    hop(p, ori_arr_[s][1]);
+  } else if (rand_val < prob_arr_[0][2]) {
+    hop(p, ori_arr_[s][2]);
+  } else if (rand_val < prob_arr_[0][3]) {
+    hop(p, ori_arr_[s][3]);
+  } else if (rand_val < prob_arr_[0][4]) {
+    hop(p, ori_arr_[s][4]);
+  } else if (rand_val < prob_arr_[0][5]) {
+    hop(p, ori_arr_[s][5]);
+  } else if (rand_val < prob_arr_[0][6]) {
     p.spin += 1;
     if (p.spin >= 6) {
       p.spin -= 6;
