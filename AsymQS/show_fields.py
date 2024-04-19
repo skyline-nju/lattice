@@ -34,6 +34,7 @@ if __name__ == "__main__":
             f.seek(frame_size * (n_frames - 10))
         else:
             f.seek(0)
+        # f.seek(0)
 
         while f.tell() < filesize:
             buf = f.read(frame_size)
@@ -46,15 +47,25 @@ if __name__ == "__main__":
             mask = rho > 0
             p[mask] = m[mask] / rho[mask]
             extent = [0, Lx, 0, Ly]
-            axes[0, 0].imshow(rho, origin="lower", vmin=0, vmax=rho0*2, extent=extent)
-            axes[0, 1].imshow(p, origin="lower", vmin=-1, vmax=1, cmap="bwr", extent=extent)
+            im1 = axes[0, 0].imshow(rho, origin="lower", vmin=0, vmax=rho0*2, extent=extent)
+            im2 = axes[0, 1].imshow(p, origin="lower", vmin=-1, vmax=1, cmap="bwr", extent=extent)
+
+            fig.colorbar(im1, ax=axes[0, 0], orientation="horizontal", extend="max")
+            fig.colorbar(im2, ax=axes[0, 1], orientation="horizontal")
 
             x = np.arange(Lx) + 0.5
             rho_x = np.mean(rho, axis=0)
             m_x = np.mean(m, axis=0)
             axes[1, 0].plot(x, rho_x)
-            axes[1, 1].plot(x, m_x)
+            axes[1, 1].plot(x, m_x/rho_x)
+            axes[0, 0].set_title(r"density")
+            axes[0, 1].set_title(r"polarity")
+            axes[1, 0].set_xlabel(r"$x$")
+            axes[1, 1].set_xlabel(r"$x$")
+            axes[1, 1].set_ylim(-1, 1)
 
+            title = r"$\eta=%g,D_r=%g, D_t=%g, L_x=%g, L_y=%g$" % (eta, Dr, Dt, Lx, Ly)
+            fig.suptitle(title, fontsize="x-large")
             plt.show()
             plt.close()
             

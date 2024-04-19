@@ -83,7 +83,7 @@ private:
   double v0_;
   double eta_[2][2]{};
 
-  bool self_inhibition_on_;
+  bool self_couplings_on_;
   double delta_t_;
   Vec_2<int> ori_[4][4]{};
   double prob_arr_[6]{};

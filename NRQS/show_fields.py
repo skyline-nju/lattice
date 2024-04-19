@@ -1,6 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import struct
+import platform
+
+root_sohrab = "/run/user/1148/gvfs/sftp:host=sohrab003,user=yduan/scratch03.local/yduan"
+root_tahmineh = "/run/user/1148/gvfs/sftp:host=tahmineh002,user=yduan/scratch03.local/yduan"
 
 
 def show_q2():
@@ -23,9 +27,12 @@ def show_q2():
     dt = 5000
     t_beg = 0
     seed = 1001
-    fin = "data/L%d_%d_Dr%g_Dt%g_e%g_%g_J%g_%g_v%g_r%g_s%d_dt%d_t%d.bin" % (Lx, Ly, Dr, Dt, etaAA, etaBB, etaAB, etaBA, v0, rho0, seed, dt, t_beg)
 
-    print(fin)
+    if (platform.system() == "Linux"):
+        folder = f"{root_sohrab}/lat_NRQS/{Lx:d}_{Ly:d}"
+    elif (platform.system() == "Windows"):
+        folder = "data"
+    fin = "%s/L%d_%d_Dr%g_Dt%g_e%g_%g_J%g_%g_v%g_r%g_s%d_dt%d_t%d.bin" % (folder, Lx, Ly, Dr, Dt, etaAA, etaBB, etaAB, etaBA, v0, rho0, seed, dt, t_beg)
     frame_size = Lx * Ly * 2 * 2 * 2
     with open(fin, "rb") as f:
         f.seek(0, 2)
@@ -64,9 +71,9 @@ def show_q2():
             plt.close()
 
 
-def show_q4():
-    Lx = 256
-    Ly = 64
+def show_q4(only_rho=False):
+    Lx = 512
+    Ly = 512
     
     rho0 = 10
     phiA = rho0
@@ -77,14 +84,18 @@ def show_q4():
     v0 = 1
 
     etaAA = -1
-    etaBB = -2
+    etaBB = -1
     etaAB = 1
     etaBA = -etaAB
     
-    dt = 5000
+    dt = 10000
     t_beg = 0
-    seed = 1010
-    fin = "data/L%d_%d_Dr%g_Dt%g_e%g_%g_J%g_%g_v%g_r%g_s%d_dt%d_t%d.bin" % (Lx, Ly, Dr, Dt, etaAA, etaBB, etaAB, etaBA, v0, rho0, seed, dt, t_beg)
+    seed = 1000
+    if (platform.system() == "Linux"):
+        folder = f"{root_sohrab}/lat_NRQS/{Lx:d}_{Ly:d}_q4"
+    elif (platform.system() == "Windows"):
+        folder = "data"
+    fin = "%s/L%d_%d_Dr%g_Dt%g_e%g_%g_J%g_%g_v%g_r%g_s%d_dt%d_t%d.bin" % (folder, Lx, Ly, Dr, Dt, etaAA, etaBB, etaAB, etaBA, v0, rho0, seed, dt, t_beg)
 
     print(fin)
     frame_size = Lx * Ly * 8 * 2
@@ -94,11 +105,11 @@ def show_q4():
 
         n_frames = filesize//frame_size
         print("find", n_frames, "frames")
-        # if n_frames > 10:
-        #     f.seek(frame_size * (n_frames - 10))
-        # else:
-        #     f.seek(0)
-        f.seek(0)
+        if n_frames > 10:
+            f.seek(frame_size * (n_frames - 10))
+        else:
+            f.seek(0)
+        # f.seek(0)
 
         while f.tell() < filesize:
             buf = f.read(frame_size)
@@ -106,24 +117,32 @@ def show_q4():
             rho = np.sum(data, axis=3)
             mx = data[:, :, :, 0] - data[:, :, :, 2]
             my = data[:, :, :, 1] - data[:, :, :, 3]
-
-            print(np.mean(mx[:, :, 0]), np.mean(mx[:, :, 1]))
-            print(np.mean(my[:, :, 0]), np.mean(my[:, :, 1]))
-
-
+            print("frame", f.tell()//frame_size, "max particle number:", data.max())
  
-            fig, axes = plt.subplots(2, 3, figsize=(9, 3), constrained_layout=True, sharex=True, sharey=True)
-            
+            if not only_rho:
+                fig, axes = plt.subplots(2, 3, figsize=(9, 3), constrained_layout=True, sharex=True, sharey=True)
+                axes[0, 0].imshow(rho[:, :, 0], origin="lower", vmin=0, vmax=rho0*3)
+                axes[1, 0].imshow(rho[:, :, 1], origin="lower", vmin=0, vmax=rho0*3)
+                axes[0, 1].imshow(mx[:, :, 0], origin="lower", vmin=-1, vmax=1, cmap="bwr")
+                axes[1, 1].imshow(mx[:, :, 1], origin="lower", vmin=-1, vmax=1, cmap="bwr")
+                axes[0, 2].imshow(my[:, :, 0], origin="lower", vmin=-1, vmax=1, cmap="bwr")
+                axes[1, 2].imshow(my[:, :, 1], origin="lower", vmin=-1, vmax=1, cmap="bwr")
+                plt.show()
+                plt.close()
+            else:
+                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 5), constrained_layout=True, sharex=True, sharey=True)
+                im1 = ax1.imshow(rho[:, :, 0], origin="lower", vmin=0, vmax=rho0*3)
+                im2 = ax2.imshow(rho[:, :, 1], origin="lower", vmin=0, vmax=rho0*3)
+                fig.colorbar(im1, ax=ax1, orientation="horizontal", extend="max")
+                fig.colorbar(im2, ax=ax2, orientation="horizontal", extend="max")
+                ax1.set_title(r"$\rho_A(\mathbf{r})$", fontsize="x-large")
+                ax2.set_title(r"$\rho_B(\mathbf{r})$", fontsize="x-large")
 
-            axes[0, 0].imshow(rho[:, :, 0], origin="lower", vmin=0, vmax=rho0*3)
-            axes[1, 0].imshow(rho[:, :, 1], origin="lower", vmin=0, vmax=rho0*3)
-            axes[0, 1].imshow(mx[:, :, 0], origin="lower", vmin=-1, vmax=1, cmap="bwr")
-            axes[1, 1].imshow(mx[:, :, 1], origin="lower", vmin=-1, vmax=1, cmap="bwr")
-            axes[0, 2].imshow(my[:, :, 0], origin="lower", vmin=-1, vmax=1, cmap="bwr")
-            axes[1, 2].imshow(my[:, :, 1], origin="lower", vmin=-1, vmax=1, cmap="bwr")
-            plt.show()
-            plt.close()
+                plt.show()
+                plt.close()
+
             
 
 if __name__ == "__main__":
-   show_q4()
+    print(platform.system())
+#    show_q4(only_rho=True)

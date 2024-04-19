@@ -11,7 +11,7 @@ lattice_2::lattice_2(const Vec_2<int>& l, double Dt, double Dr,
   eta_[0][1] = etaAB / rho_thresh_;
   eta_[1][0] = etaBA / rho_thresh_;
   eta_[1][1] = etaBB / rho_thresh_;
-  self_inhibition_on_ = !(etaAA == 0 && etaBB == 0);
+  self_couplings_on_ = !(etaAA == 0 && etaBB == 0);
 
   prob_arr_[0] = Dr_;
   if (l.y > 1) {
@@ -25,7 +25,7 @@ lattice_2::lattice_2(const Vec_2<int>& l, double Dt, double Dr,
   }
 
   
-  if (self_inhibition_on_) {
+  if (self_couplings_on_) {
     delta_t_ = 1 / (prob_arr_[3] + Dt_ + 4 * v0);
   } else {
     delta_t_ = 1 / (prob_arr_[3] + Dt_ + 2 * v0);
@@ -64,7 +64,7 @@ double lattice_2::get_v(const Par_2& p) const {
   int j = (int(p.pos.x) + p.pos.y * l_.x) * 2;
   double drho[2] = { rho_[j] - rho_thresh_, rho_[j + 1] - rho_thresh_ };
   int s1 = p.species;
-  if (self_inhibition_on_) {
+  if (self_couplings_on_) {
     return v0_ * (1 + tanh(eta_[s1][0] * drho[0])) * (1 + tanh(eta_[s1][1] * drho[1]));
   } else {
     int s2 = 1 - p.species;

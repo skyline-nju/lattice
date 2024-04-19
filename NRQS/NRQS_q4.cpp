@@ -12,7 +12,7 @@ lattice_4::lattice_4(const Vec_2<int>& l, double Dt, double Dr,
   eta_[0][1] = etaAB / rho_thresh_;
   eta_[1][0] = etaBA / rho_thresh_;
   eta_[1][1] = etaBB / rho_thresh_;
-  self_inhibition_on_ = !(etaAA == 0 && etaBB == 0);
+  self_couplings_on_ = !(etaAA == 0 && etaBB == 0);
 
   ori_[0][0] = Vec_2<int>(1, 0);
   ori_[0][1] = Vec_2<int>(0, 1);
@@ -35,7 +35,7 @@ lattice_4::lattice_4(const Vec_2<int>& l, double Dt, double Dr,
   ori_[3][0] = Vec_2<int>(0, -1);
 
   double max_vel;
-  if (self_inhibition_on_) {
+  if (self_couplings_on_) {
     max_vel = 4 * v0;
   } else {
     max_vel = 2 * v0;
@@ -80,7 +80,7 @@ double lattice_4::get_v(const Par_4& p) const {
   get_rho(p.pos, rho_A, rho_B);
   double drho[2] = { rho_A - rho_thresh_, rho_B - rho_thresh_ };
   int s1 = p.species;
-  if (self_inhibition_on_) {
+  if (self_couplings_on_) {
     return v0_ * (1 + tanh(eta_[s1][0] * drho[0])) * (1 + tanh(eta_[s1][1] * drho[1]));
   } else {
     int s2 = 1 - p.species;
@@ -129,7 +129,6 @@ void lattice_4::rot(Par_4& p, int ds) const {
     p.spin -= 4;
   }
   int i_new = j + p.spin;
-  double r1 = cal_rho0();
   sigma_[i_old] -= 1;
   sigma_[i_new] += 1;
 }

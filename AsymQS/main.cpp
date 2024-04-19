@@ -6,7 +6,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  int Lx = 512;
+  int Lx = 1024;
   int Ly = 16;
   double rho_thresh = 20;
   double phi = rho_thresh;
