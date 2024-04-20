@@ -30,6 +30,9 @@
     <ClInclude Include="NRQS_q4.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="NRQS_q6.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="comn.cpp">
@@ -42,6 +45,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="NRQS_q4.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NRQS_q6.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

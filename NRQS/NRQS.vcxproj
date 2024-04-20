@@ -130,6 +130,7 @@
     <ClInclude Include="comn.h" />
     <ClInclude Include="NRQS.h" />
     <ClInclude Include="NRQS_q4.h" />
+    <ClInclude Include="NRQS_q6.h" />
     <ClInclude Include="rand.h" />
     <ClInclude Include="vect.h" />
   </ItemGroup>
@@ -138,6 +139,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NRQS.cpp" />
     <ClCompile Include="NRQS_q4.cpp" />
+    <ClCompile Include="NRQS_q6.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
