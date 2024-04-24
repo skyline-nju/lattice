@@ -6,12 +6,12 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  int Lx = 1024;
+  int Lx = 128;
   int Ly = 16;
-  double rho_thresh = 20;
+  double rho_thresh = 80;
   double phi = rho_thresh;
 
-  double Dt = 0.2;
+  double Dt = 0.3;
   double Dr = 0.01;
   double v0 = 1;
 
@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
   double alpha = 1;
 
   int n_step = 10000000;
-  int dn_out = 5000;
+  int dn_out = 1000;
   int seed = 1001;
 
 

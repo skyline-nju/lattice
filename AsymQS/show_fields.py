@@ -4,20 +4,20 @@ import struct
 
 
 if __name__ == "__main__":
-    Lx = 512
+    Lx = 128
     Ly = 16
     
-    rho0 = 20
+    rho0 = 80
     phi = rho0
 
-    Dt = 0.2
+    Dt = 0.3
     Dr = 0.01
     v0 = 1
 
     eta = 2
     alpha = 1
     
-    dt = 5000
+    dt = 1000
     t_beg = 0
     seed = 1001
     fin = "data/L%d_%d_Dr%g_Dt%g_e%g_a%g_v%g_r%g_s%d_dt%d_t%d.bin" % (Lx, Ly, Dr, Dt, eta, alpha, v0, rho0, seed, dt, t_beg)
@@ -37,10 +37,11 @@ if __name__ == "__main__":
         # f.seek(0)
 
         while f.tell() < filesize:
+            i_frame = f.tell() // frame_size
+            print("frame", i_frame)
             buf = f.read(frame_size)
             data = np.array(struct.unpack("%dH%dh" % (Lx * Ly, Lx * Ly), buf)).reshape(2, Ly, Lx)
             rho, m = data
-            print(np.mean(rho))
             fig, axes = plt.subplots(2, 2, figsize=(9, 3), constrained_layout=True, sharex=True)
             
             p = np.zeros((Ly, Lx))

@@ -42,10 +42,10 @@ public:
   ~lattice_2();
 
   template <typename TRan>
-  void ini_rand(TRan &myran);
+  void ini_rand(TRan &myran, int n_copied=1);
 
   template <typename TRan>
-  void ini_rand(TRan &myran, int spin0);
+  void ini_rand_pos_ordered_ori(TRan &myran, int spin0);
 
   int get_field_idx(const Par_2& p, int offset = 0) const;
 
@@ -90,15 +90,21 @@ private:
 };
 
 template <typename TRan>
-void lattice_2::ini_rand(TRan& myran) {
-  for (int i = 0; i < n_par_; i++) {
+void lattice_2::ini_rand(TRan& myran, int n_subgroups) {
+  int n_new = n_par_ / n_subgroups;
+  for (int i = 0; i < n_new; i++) {
     p_arr_.emplace_back(myran, l_);
-    add_particle(p_arr_.back());
+    p_arr_.push_back(p_arr_.back());
+    for (int j = 1; j < n_subgroups; j++)
+      p_arr_.push_back(p_arr_.back());
+  }
+  for (auto& p : p_arr_) {
+    add_particle(p);
   }
 }
 
 template <typename TRan>
-void lattice_2::ini_rand(TRan& myran, int spin0) {
+void lattice_2::ini_rand_pos_ordered_ori(TRan& myran, int spin0) {
   for (int i = 0; i < n_par_; i++) {
     p_arr_.emplace_back(myran, l_, spin0);
     add_particle(p_arr_.back());
