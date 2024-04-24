@@ -6,9 +6,9 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  int Lx =128;
-  int Ly =128;
-  double rho_thresh = 5;
+  int Lx =256;
+  int Ly =256;
+  double rho_thresh = 10;
   double phi = rho_thresh;
 
   double Dt = 0.07;
