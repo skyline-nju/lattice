@@ -69,9 +69,49 @@ void lattice_6::del_particle(const Par_6& p) const {
   sigma_[sigma_idx] -= 1;
 }
 
+double lattice_6::get_v_back(const Par_6& p) const {
+  Vec_2<int> my_ori = ori_[p.spin][0];
+  int x_back = p.pos.x - my_ori.x;
+  int y_back = p.pos.y - my_ori.y;
+  tangle_1(x_back, l_.x);
+  tangle_1(y_back, l_.y);
+  int idx_back0 = x_back + y_back * l_.x;
+
+  my_ori = ori_[p.spin][1];
+  x_back = p.pos.x - my_ori.x;
+  y_back = p.pos.y - my_ori.y;
+  tangle_1(x_back, l_.x);
+  tangle_1(y_back, l_.y);
+  int idx_back1 = x_back + y_back * l_.x;
+
+  my_ori = ori_[p.spin][5];
+  x_back = p.pos.x - my_ori.x;
+  y_back = p.pos.y - my_ori.y;
+  tangle_1(x_back, l_.x);
+  tangle_1(y_back, l_.y);
+  int idx_back2 = x_back + y_back * l_.x;
+
+  double rho_back = (rho_[idx_back0] + rho_[idx_back1] + rho_[idx_back2]) / 3;
+
+  return v0_ * (1 + tanh(eta_ * (rho_back - rho_thresh_)));
+}
+
+double lattice_6::get_v_front(const Par_6& p) const {
+  Vec_2<int> my_ori = ori_[p.spin][0];
+  int x_front = p.pos.x + my_ori.x;
+  int y_front = p.pos.y + my_ori.y;
+  tangle_1(x_front, l_.x);
+  tangle_1(y_front, l_.y);
+  int idx_front = x_front + y_front * l_.x;
+  return v0_ * (1 + tanh(eta_ * (rho_[idx_front] - rho_thresh_)));
+}
+
+
 void lattice_6::hop_rot(Par_6& p, double rand_val) const {
   if (rand_val < prob_arr_[0]) {
     double v = get_v(p);
+    // double v = get_v_back(p);
+    //double v = get_v_front(p);
     if (rand_val < Dt_ + v) {
       hop(p, ori_[p.spin][0]);
     }

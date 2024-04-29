@@ -17,6 +17,7 @@
 *.bin
 *.dat
 .vscode
+LatQS/fig
 
 # Build results
 [Dd]ebug/

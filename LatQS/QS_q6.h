@@ -60,6 +60,10 @@ public:
     return v0_ * (1 + tanh(eta_ * (get_rho(p) - rho_thresh_)));
   }
 
+  double get_v_back(const Par_6& p) const;
+
+  double get_v_front(const Par_6& p) const;
+
   void hop_rot(Par_6& p, double rand_val) const;
 
   void hop(Par_6& p, const Vec_2<int>& ori) const;

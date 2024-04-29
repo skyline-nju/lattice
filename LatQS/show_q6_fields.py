@@ -162,16 +162,16 @@ def plot_rect_snap(tri, rho, mx, my, xi, yi, rho0, Lx, Ly, t, fout=None):
 
 def show_q6(fin=None, savefig=False):
     if fin is None:
-        Lx = 256
-        Ly = 256
+        Lx = 128
+        Ly = 128
         
         rho0 = 10
         phi = 10
 
-        Dt = 0.07
+        Dt = 0.02
         Dr = 0.05
-        v0 = 1.76
-        eta = -2
+        v0 = 1
+        eta = -3
         
         dt = 5000
         t_beg = 0
@@ -236,12 +236,15 @@ def show_q6(fin=None, savefig=False):
             plot_rect_snap(tri, rho, mx, my, xi, yi, rho0, Lx, Ly, t, fout)
 
 def update_figs():
-    folder = f"{root_sohrab}/lat_QS/256_256_q6"
+    if (platform.system() == "Linux"):
+        folder = f"{root_sohrab}/lat_QS/256_256_q6"
+    else:
+        folder = "data"
     files = glob.glob(f"{folder}/*")
     for fin in files:
-        show_q6(fin, only_rho=False, savefig=True)
+        show_q6(fin, savefig=True)
 
 
 if __name__ == "__main__":
-    show_q6(savefig=False)
-    # update_figs()
+    # show_q6(savefig=False)
+    update_figs()

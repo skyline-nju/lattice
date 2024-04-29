@@ -6,19 +6,19 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  int Lx =256;
-  int Ly =256;
+  int Lx = 128;
+  int Ly = 128;
   double rho_thresh = 10;
   double phi = rho_thresh;
 
-  double Dt = 0.07;
-  double Dr = 0.05;
-  double v0 = 1.76;
+  double Dt = 0.03;
+  double Dr = 0.1;
+  double v0 = 1;
 
   double eta = -2;
 
-  int n_step = 1000000;
-  int dn_out = 5000;
+  int n_step = 10000000;
+  int dn_out = 10000;
   unsigned long long seed = 1000;
 
 
