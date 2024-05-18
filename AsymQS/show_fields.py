@@ -4,20 +4,20 @@ import struct
 
 
 if __name__ == "__main__":
-    Lx = 128
+    Lx = 256
     Ly = 16
     
-    rho0 = 80
+    rho0 = 20
     phi = rho0
 
-    Dt = 0.3
-    Dr = 0.01
+    Dt = 0.01
+    Dr = 0.
     v0 = 1
 
     eta = 2
-    alpha = 1
+    alpha = 0
     
-    dt = 1000
+    dt = 5000
     t_beg = 0
     seed = 1001
     fin = "data/L%d_%d_Dr%g_Dt%g_e%g_a%g_v%g_r%g_s%d_dt%d_t%d.bin" % (Lx, Ly, Dr, Dt, eta, alpha, v0, rho0, seed, dt, t_beg)

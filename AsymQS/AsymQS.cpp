@@ -129,7 +129,7 @@ void run(int Lx, int Ly,
   Vec_2<int> l(Lx, Ly);
   Ranq2 myran(seed);
   lattice_2 domain(l, Dt, Dr, phi, rho_thresh, v0, eta, alpha);
-  domain.ini_rand(myran, 8);
+  domain.ini_rand(myran, 1);
   //domain.ini_rand(myran, 1);
   char folder[255] = "data";
   char basename[255];
